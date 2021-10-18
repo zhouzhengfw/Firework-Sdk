@@ -1,0 +1,77 @@
+query feed($id: String!, $first:Int, $after:String) {
+  feed(id: $id) {
+    ... on Feed {
+      ...VideoFeed
+    }
+    ... on FeedNotFoundError {
+        message
+    }
+  }
+}
+
+fragment VideoFeed on Feed {
+  id
+  itemsConnection(first: $first, after: $after) {
+  pageInfo {
+      hasNextPage
+      endCursor
+  }
+  edges {
+      cursor
+      variant
+      node {
+      ... on Video {
+          id
+          ...VideoFeedItem
+        }
+      }
+    }
+  }
+}
+
+fragment VideoFeedItem on Video {
+  id
+  quality
+  engagementUrl
+  viewsCount
+  viewsUrl
+  hashtags
+  badge
+  duration
+  #repostedFollowings
+  creator {
+    id
+    avatarUrl
+    name
+    username
+  }
+  caption
+  revealType
+  thumbnailUrl
+  videoPosters {
+    id
+    format
+    url
+  }
+  reportUrl
+  width
+  height
+  videoType
+  # Get Variant from edge
+  videoFiles {
+    id
+    fileUrl
+    type
+    width
+    height
+    format
+  }
+  sharesUrl
+  webShareUrl
+  callToAction {
+    trackUrl
+    type
+    url
+    typeTranslation
+  }
+}

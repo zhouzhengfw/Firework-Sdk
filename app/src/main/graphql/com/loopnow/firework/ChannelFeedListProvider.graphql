@@ -1,0 +1,8 @@
+mutation createChannelFeed($channelID:String!, $first:Int, $after:String) {
+  createChannelPersonalizedFeed(channelId:$channelID) {
+    ...VideoFeed
+    ... on ChannelNotFoundError {
+      message
+    }
+  }
+}

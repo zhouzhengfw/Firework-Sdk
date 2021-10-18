@@ -1,0 +1,5 @@
+mutation createDiscoverFeed($first:Int, $after:String) {
+  createDiscoverFeed {
+    ...VideoFeed
+  }
+}

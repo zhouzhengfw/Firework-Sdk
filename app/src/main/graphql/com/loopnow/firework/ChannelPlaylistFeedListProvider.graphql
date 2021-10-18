@@ -1,0 +1,8 @@
+mutation createChannelPlaylistFeed($channelID:String!, $playlistID:String!, $first:Int, $after:String) {
+  createChannelPlaylistFeed(channelId:$channelID, playlistId:$playlistID) {
+    ...VideoFeed
+    ... on PlaylistNotFoundError {
+      message
+    }
+  }
+}
