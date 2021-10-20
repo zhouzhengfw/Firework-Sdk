@@ -188,12 +188,12 @@ object FwUtil {
      *
      */
     fun getHost(): String {
-        return if (BuildConfig.DEBUG) FwConsts.HOST_STAGING else FwConsts.HOST_PRODUCTION
+        return if (com.loopnow.firework.BuildConfig.DEBUG) FwConsts.HOST_STAGING else FwConsts.HOST_PRODUCTION
     }
 
     fun logger(type: String, tag: String, info: String, logInDebugOnly: Boolean) {
         if (logInDebugOnly) {
-            if (!BuildConfig.DEBUG) {
+            if (!com.loopnow.firework.BuildConfig.DEBUG) {
                 return
             }
         }

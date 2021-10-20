@@ -17,6 +17,18 @@ android {
         versionName = "1.0"
     }
 
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+        }
+
+        getByName("debug") {
+            isDebuggable = true
+        }
+
+    }
+
     buildFeatures {
         viewBinding = true
     }

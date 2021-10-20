@@ -26,7 +26,7 @@ object FWStorage {
       return BoosterSharedPreferences.getSharedPreferences(FWSDk.app, DEFAULT_SP_NAME).contains(key)
     }
 
-    fun putInt(spName: String = DEFAULT_SP_NAME, key: String, value: Int, isSyn: Boolean = false) {
+    fun putInt(key: String, value: Int, isSyn: Boolean = false,spName: String = DEFAULT_SP_NAME) {
         BoosterSharedPreferences.getSharedPreferences(FWSDk.app,spName)?.edit()
             ?.apply {
                 putInt(key, value)
@@ -38,7 +38,7 @@ object FWStorage {
             }
     }
 
-    fun putLong(spName: String = DEFAULT_SP_NAME, key: String, value: Long, isSyn: Boolean = false) {
+    fun putLong( key: String, value: Long, isSyn: Boolean = false,spName: String = DEFAULT_SP_NAME) {
        BoosterSharedPreferences.getSharedPreferences(FWSDk.app,spName)?.edit()
             ?.apply {
                 putLong(key, value)
@@ -50,7 +50,7 @@ object FWStorage {
             }
     }
 
-    fun putBoolean(spName: String = DEFAULT_SP_NAME, key: String, value: Boolean, isSyn: Boolean = false) {
+    fun putBoolean( key: String, value: Boolean, isSyn: Boolean = false,spName: String = DEFAULT_SP_NAME) {
        BoosterSharedPreferences.getSharedPreferences(FWSDk.app,spName)?.edit()
             ?.apply {
                 putBoolean(key, value)
@@ -62,7 +62,7 @@ object FWStorage {
             }
     }
 
-    fun <T> putObject(spName: String = DEFAULT_SP_NAME, key: String, value: T, isSyn: Boolean = false) {
+    fun <T> putObject( key: String, value: T, isSyn: Boolean = false,spName: String = DEFAULT_SP_NAME) {
        BoosterSharedPreferences.getSharedPreferences(FWSDk.app,spName)?.edit()
             ?.apply {
                 putString(key, Gson().toJson(value))
