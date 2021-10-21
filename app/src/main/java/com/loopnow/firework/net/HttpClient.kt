@@ -34,7 +34,7 @@ object FireWorkGraphqlClient {
 
     fun init( ) {
         instance = ApolloClient.builder()
-            .serverUrl(if (com.loopnow.firework.BuildConfig.DEBUG) FwConsts.HOST_STAGING+ GRAPHQL_PATH else FwConsts.HOST_PRODUCTION + GRAPHQL_PATH)
+            .serverUrl(if (com.loopnow.firework.BuildConfig.DEBUG) FwConsts.HOST_PRODUCTION+ GRAPHQL_PATH else FwConsts.HOST_PRODUCTION + GRAPHQL_PATH)
             .okHttpClient(httpOkHttClient)
 //            .addCustomTypeAdapter(scalarType, DateTimeApolloAdapter())
             .build()

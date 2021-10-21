@@ -6,28 +6,28 @@ plugins {
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(31)
     buildToolsVersion("29.0.3")
 
     defaultConfig {
-        applicationId = "com.loopnow.firework"
+        applicationId = "com.loopnow.fireworkdemo"
         minSdkVersion(23)
-        targetSdkVersion(29)
+        targetSdkVersion(31)
         versionCode = 1
         versionName = "1.0"
     }
 
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-        }
-
-        getByName("debug") {
-            isDebuggable = true
-        }
-
-    }
+//    buildTypes {
+//        getByName("release") {
+//            isMinifyEnabled = false
+//            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+//        }
+//
+//        getByName("debug") {
+//            isDebuggable = true
+//        }
+//
+//    }
 
     buildFeatures {
         viewBinding = true
@@ -61,6 +61,11 @@ dependencies {
     implementation("com.google.android.material:material:1.1.0")
     implementation("androidx.security:security-crypto:1.0.0-rc02")
     implementation("com.github.gzu-liyujiang:Android_CN_OAID:4.2.3")
+
+//    debugImplementation ("com.facebook.flipper:flipper:0.115.0")
+//    debugImplementation ("com.facebook.soloader:soloader:0.10.1")
+//    debugImplementation ("com.facebook.flipper:flipper-network-plugin:0.115.0")
+//    releaseImplementation ("com.facebook.flipper:flipper-noop:0.115.0")
 
     testImplementation("junit:junit:4.13")
     androidTestImplementation("androidx.test.ext:junit:1.1.1")

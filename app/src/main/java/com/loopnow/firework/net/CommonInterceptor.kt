@@ -13,10 +13,10 @@ import okhttp3.*
  */
 class CommonInterceptor : Interceptor {
 
-    override fun intercept(chain: Interceptor.Chain): Response? {
-        //正式环境必填字段
+    override fun intercept(chain: Interceptor.Chain): Response {
+
         val build = chain.request().newBuilder().apply {
-               addHeader("session_id", ":${FWSDk.sdkSessionId?:""}")
+               addHeader("session_id", "${FWSDk.sdkSessionId?:""}")
                addHeader("visitor_id", "${FWSDk.sdkUserId?:""}")
                addHeader("User-Agent", "${FWSDk.fwUserAgent?:""}")
                addHeader("Accept-Language", FwUtil.getAcceptLanguage())
@@ -26,7 +26,7 @@ class CommonInterceptor : Interceptor {
             }
         var response:Response? = null
         kotlin.runCatching {
-            var request = build!!.build()
+            var request = build.build()
             Log.e("request",request.toString()?:"")
 
             response = chain.proceed(request)
@@ -35,7 +35,7 @@ class CommonInterceptor : Interceptor {
         }
 
 
-        return response
+        return response!!
     }
 
 }

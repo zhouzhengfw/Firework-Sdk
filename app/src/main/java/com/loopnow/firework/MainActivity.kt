@@ -2,9 +2,15 @@ package com.loopnow.firework
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.apollographql.apollo.coroutines.toFlow
 import com.google.android.material.snackbar.Snackbar
+import com.loopnow.firework.fwsdk.FWSDk
+import com.loopnow.firework.fwsdk.FWViewModel
+import com.loopnow.firework.utils.FwConsts
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.retryWhen
@@ -16,7 +22,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+        var vm =FWViewModel(application)
+        findViewById<View>(R.id.btn_test1).setOnClickListener {
+            kotlinx.coroutines.GlobalScope.launch(Dispatchers.IO) {
+                vm.getFeed()
+            }
 
+        }
+        findViewById<View>(R.id.btn_test2).setOnClickListener {
+            kotlinx.coroutines.GlobalScope.launch(Dispatchers.IO) {
+                vm.authorize(FwConsts.HOST_PRODUCTION + FwConsts.OAUTH_URL,  FWSDk.sdkClientId!! ,  FWSDk.sdkGuestId!!)
+
+            }
+        }
         lifecycleScope.launch {
 //            apolloClient(this@MainActivity).subscribe(TripsBookedSubscription()).toFlow()
 //                .retryWhen { _, attempt ->

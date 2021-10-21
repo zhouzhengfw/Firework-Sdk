@@ -5,13 +5,15 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.apollographql.apollo.api.Input
 import com.google.gson.Gson
 import com.loopnow.firework.CreateDiscoverFeedMutation
 import com.loopnow.firework.fwsdk.beans.AuthBean
 import com.loopnow.firework.net.FireWorkGraphqlClient.mutate
+import com.loopnow.firework.net.OkHttpClient.httpOkHttClient
 import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
+
 import okio.IOException
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -22,16 +24,16 @@ import kotlin.coroutines.CoroutineContext
 
 class FWViewModel(application: Application) : AndroidViewModel(application) {
 
-//    var auth = Muta
+    //    var auth = Muta
     private val client = OkHttpClient()
 
 
-     fun authorize1(strUrl: String, clientId: String, guestId: String) : JSONObject  {
+    fun authorize1(strUrl: String, clientId: String, guestId: String): JSONObject {
         val url = URL(strUrl)
         val httpConn = url.openConnection()
         httpConn.setRequestProperty("Accept", "application/json")
 
-        FWSDk.fwUserAgent?.let{
+        FWSDk.fwUserAgent?.let {
             Log.v("NetworkLog", "$it")
             httpConn.setRequestProperty("User-Agent", it)
         }
@@ -54,7 +56,7 @@ class FWViewModel(application: Application) : AndroidViewModel(application) {
         if (rc != 201 && rc != 200) {
 
             val errorObject = JSONObject()
-            errorObject.put("error",rc)
+            errorObject.put("error", rc)
             throw Exception(errorObject.toString())
 
         }
@@ -74,51 +76,59 @@ class FWViewModel(application: Application) : AndroidViewModel(application) {
 
     }
 
-    fun authorize(strUrl: String, clientId: String, guestId: String,callback:(auth:AuthBean)->Unit={}) {
-        var auth:AuthBean? = null
+    fun authorize(
+        strUrl: String,
+        clientId: String,
+        guestId: String,
+        callback: (auth: AuthBean) -> Unit = {}
+    ) {
+        var auth: AuthBean? = null
 
         viewModelScope.launch(context = Dispatchers.IO) {
-            val params = "grant_type=guest_uid&scope=openid&client_id=$clientId&guest_uid=$guestId"
-
-            val request = Request.Builder()
-                .addHeader("User-Agent", FWSDk.fwUserAgent)
-                .addHeader("Accept", "application/json")
-//                .addHeader("Content-Type", "application/json")
-
-                .url(strUrl+"?${params}")
+            val formBody: RequestBody = FormBody.Builder()
+                .add("grant_type", "guest_uid")
+                .add("scope", "openid")
+                .add("client_id", clientId)
+                .add("guest_uid", guestId)
                 .build()
+            val request = Request.Builder()
+                .header("User-Agent", FWSDk.fwUserAgent ?: "")
+                .header("Accept", "application/json")
+                .post(formBody)
+                .url(strUrl).build()
 
-            FWSDk.fwUserAgent?.let{
-//                httpConn.setRequestProperty("User-Agent", it)
-                client
-            }
-            client.newCall(request).execute().use { response ->
-                println(response.body()!!.string())
+            kotlin.runCatching {
+                OkHttpClient.Builder().build().newCall(request).execute().use { response ->
 
-                if (!response.isSuccessful) throw IOException("Unexpected code $response")
+                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+                    var res = response.body()!!.string().apply {
+                        println(this)
+                    }
+                    auth = Gson().fromJson(res, AuthBean::class.java)
+                    Log.e("FWViewModel", "" + res)
+                    auth?.let {
+                        callback(it)
+                    }
+                }
 
-
-                println(response.body()!!.string())
+            }.onFailure {
+                Log.e("FWViewModel", "" + it.message)
 
             }
 
         }
-
-
-
-//            auth.postValue(response.toString())
-//            auth = Gson().fromJson(response.toString(),AuthBean::class.java)
-//            Log.e("FWViewModel",""+ response.toString())
-//            auth?.let {
-//                callback(it)
-//            }
-
     }
 
-    fun getFeed(){
+    fun getFeed() {
         viewModelScope.launch {
-            var data = mutate(CreateDiscoverFeedMutation())
-            Log.e("getFeed",data?.createDiscoverFeed?.fragments?.videoFeed?.id?:"")
+            Log.e("getFeed", "")
+            var data = mutate(CreateDiscoverFeedMutation(Input.fromNullable(1)))
+
+            kotlin.runCatching {
+                Log.e("getFeed", Gson().toJson(data))
+
+            }
+
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.loopnow.firework
 
 import android.app.Application
+
 import com.loopnow.firework.fwsdk.FWSDk
 
 class App:Application() {

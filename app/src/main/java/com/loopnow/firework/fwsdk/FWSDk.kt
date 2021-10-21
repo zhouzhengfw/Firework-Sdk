@@ -29,11 +29,15 @@ class FWSDk {
         var sdkSessionId: String = ""
         var fwVm: FWViewModel? = null
         var fwUserAgent: String? = null
+        var accessToken: String? = null
         var sdkUserId: String? = null
         var sdkClientId: String? = null
         var sdkGuestId: String? = null
 
-        var auth:AuthBean? = null
+
+        @JvmStatic
+        var auth: AuthBean? = null
+
         @SuppressLint("StaticFieldLeak")
         var app: Context? = null
 
@@ -43,6 +47,7 @@ class FWSDk {
             sdkUserId = userId
             sdkClientId = clientId
             sdkSessionId = newSessionId()
+            FireWorkGraphqlClient.init()
 
 
             sdkGuestId = if (FWStorage.contains(FwConsts.GUEST_ID)) {
@@ -51,36 +56,39 @@ class FWSDk {
                 if (userId.isNullOrEmpty()) UUID.randomUUID().toString() else userId
             }
 
-            FWStorage.putSting(FwConsts.GUEST_ID, sdkGuestId!!,isSyn = true)
+            FWStorage.putSting(FwConsts.GUEST_ID, sdkGuestId!!, isSyn = true)
 
             fwUserAgent = FwUtil.getUserAgentInfo(application, application.packageName.toString())
-            Log.e("initSdk",fwUserAgent+"")
+            Log.e("initSdk", fwUserAgent + "")
             fwVm = ViewModelProvider.AndroidViewModelFactory.getInstance(app as Application)
                 .create(FWViewModel::class.java)
 
-            GlobalScope.launch {
-                fwVm?.authorize1(FwUtil.getHost() + FwConsts.OAUTH_URL,  clientId ,  sdkGuestId!!)
-//                {
-//                    auth = it
-//                    FWStorage.putLong(TOKEN_RECEIVED_TIME,System.currentTimeMillis(),true)
-//                    val idToken = it.id_token
-//                    if (!idToken.isNullOrBlank()) {
-//                        decoded(idToken)
-//                    } else {
-//                        //User login
-//                        it?.let {
-//                            FWStorage.putSting(FwConsts.USER_LOGIN_ACCESS_TOKEN, it.access_token)
-//                            FWStorage.putSting(FwConsts.USER_LOGIN_REFRESH_TOKEN, it.refresh_token)
-//                            FWStorage.putInt(FwConsts.USER_LOGIN_REFRESH_TOKEN_EXPIRES_IN, it.refresh_token_expires_in)
-//                            FWStorage.putLong(FwConsts.USER_LOGIN_CREATED_AT, System.currentTimeMillis())
-//                        }
-//                    }
-//                }
+            fwVm?.authorize(FwConsts.HOST_PRODUCTION + FwConsts.OAUTH_URL, clientId, sdkGuestId!!) {
+                auth = it
+                accessToken = it.access_token
+                FWStorage.putLong(TOKEN_RECEIVED_TIME, System.currentTimeMillis(), true)
+                val idToken = it.id_token
+                if (!idToken.isNullOrBlank()) {
+                    decoded(idToken)
+                } else {
+
+                    it?.let {
+                        FWStorage.putSting(FwConsts.USER_LOGIN_ACCESS_TOKEN, it.access_token)
+                        FWStorage.putSting(FwConsts.USER_LOGIN_REFRESH_TOKEN, it.refresh_token)
+                        FWStorage.putInt(
+                            FwConsts.USER_LOGIN_REFRESH_TOKEN_EXPIRES_IN,
+                            it.refresh_token_expires_in
+                        )
+                        FWStorage.putLong(
+                            FwConsts.USER_LOGIN_CREATED_AT,
+                            System.currentTimeMillis()
+                        )
+                    }
+                }
 //                fwVm?.getFeed()
             }
-//            FireWorkGraphqlClient.init()
 
-//            app.registerActivityLifecycleCallbacks()
+
         }
 
         private fun newSessionId() = UUID.randomUUID().toString()
